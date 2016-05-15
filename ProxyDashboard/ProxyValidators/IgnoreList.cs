@@ -11,30 +11,32 @@ namespace ProxyDashboard.ProxyValidators
     /// </summary>
     public class IgnoreList : IProxyValidator
     {
+        public string Name { get; } = "Ignore List";
+
         private const string FILE_NAME = "ignored.txt";
 
-        private List<string> list;
+        private List<string> lines;
 
-        public string Name { get; } = "Ignore List";
+        public IgnoreList()
+        {
+            if (File.Exists(FILE_NAME))
+                lines = File.ReadAllLines(FILE_NAME).ToList();
+            else
+                lines = new List<string>();
+        }
 
         public bool IsValid(string ip)
         {
-            if (list == null)
-                if (File.Exists(FILE_NAME))
-                    list = File.ReadAllLines(FILE_NAME).ToList();
-                else
-                    list = new List<string>();
-
-            return !list.Contains(ip);
+            return !lines.Contains(ip);
         }
 
         public void AddIgnore(string ip)
         {
-            if (list.Contains(ip)) return;
+            if (lines.Contains(ip)) return;
 
-            list.Add(ip);
+            lines.Add(ip);
 
-            File.WriteAllLines(FILE_NAME, list);
+            File.WriteAllLines(FILE_NAME, lines);
         }
     }
 }

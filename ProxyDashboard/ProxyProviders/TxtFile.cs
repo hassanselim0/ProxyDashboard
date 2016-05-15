@@ -16,7 +16,10 @@ namespace ProxyDashboard.ProxyProviders
 
         public TxtFile()
         {
-            lines = File.ReadAllLines(FILE_NAME).ToList();
+            if (File.Exists(FILE_NAME))
+                lines = File.ReadAllLines(FILE_NAME).ToList();
+            else
+                lines = new List<string>();
         }
 
         public IEnumerable<string> EnumerateIPs()
