@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace ProxyDashboard
@@ -16,6 +17,8 @@ namespace ProxyDashboard
     {
         private IPAddress ip;
         private int port;
+
+        private CancellationTokenSource cts;
 
         private bool isRunning;
 
@@ -66,12 +69,18 @@ namespace ProxyDashboard
 
             ip = IPAddress.Parse(parts[0]);
             port = int.Parse(parts[1]);
+
+            if (cts != null) cts.Cancel();
+            cts = new CancellationTokenSource();
         }
 
         // This handles the state of clients (one for each end of this "intermediate" proxy)
         private async void handleClients(string cId, TcpClient client1, TcpClient client2)
         {
             client1.ReceiveTimeout = client2.ReceiveTimeout = 2000;
+
+            cts.Token.Register(client1.Close);
+            cts.Token.Register(client2.Close);
 
             await Task.WhenAll(
                 handleBrowserToProxy(cId, client1, client2),
