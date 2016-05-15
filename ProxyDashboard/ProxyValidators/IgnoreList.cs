@@ -30,7 +30,7 @@ namespace ProxyDashboard.ProxyValidators
 
         public void AddIgnore(string ip)
         {
-            if (!list.Contains(ip)) return;
+            if (list.Contains(ip)) return;
 
             list.Add(ip);
 
