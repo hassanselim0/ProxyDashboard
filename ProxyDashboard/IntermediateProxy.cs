@@ -45,13 +45,13 @@ namespace ProxyDashboard
                 var client2 = new TcpClient();
                 try
                 {
-                    client2.Connect(ip, port);
+                    await client2.ConnectAsync(ip, port);
                     Console.WriteLine(cId + "Connected to Proxy");
                 }
                 catch
                 {
                     Console.WriteLine(cId + "Failed to Connect to Proxy");
-                    client1.Close();
+                    client1.Dispose();
                     continue;
                 }
 
@@ -79,16 +79,16 @@ namespace ProxyDashboard
         {
             client1.ReceiveTimeout = client2.ReceiveTimeout = 2000;
 
-            cts.Token.Register(client1.Close);
-            cts.Token.Register(client2.Close);
+            cts.Token.Register(client1.Dispose);
+            cts.Token.Register(client2.Dispose);
 
             await Task.WhenAll(
                 handleBrowserToProxy(cId, client1, client2),
                 handleProxyToBrowser(cId, client1, client2));
 
             Console.WriteLine("\t" + cId + "Closing Connections");
-            client1.Close();
-            client2.Close();
+            client1.Dispose();
+            client2.Dispose();
         }
 
         // Handles data going from the Browser to the Proxy

@@ -1,2 +1,0 @@
-﻿# Enter a list of ip:port values here to be loaded in the program
-# New entries get added here when you do the "Add" command

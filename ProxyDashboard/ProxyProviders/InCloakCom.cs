@@ -28,7 +28,11 @@ namespace ProxyDashboard.ProxyProviders
 
         public IEnumerable<string> EnumerateIPs()
         {
-            var html = http.GetStringAsync("https://incloak.com/proxy-list/?country=US").Result;
+            // For some reason the response charset is "windows-1251" which is unsupported in .Net Core
+            // So we'll get the response object and manually change the charset to utf-8
+            var res = http.GetAsync("https://incloak.com/proxy-list/?country=US").Result;
+            res.Content.Headers.ContentType.CharSet = "utf-8";
+            var html = res.Content.ReadAsStringAsync().Result;
 
             var tbodyIdx = html.IndexOf("<tbody>");
             var tbody = html.Substring(tbodyIdx, html.IndexOf("</tbody>") - tbodyIdx + 8);

@@ -39,5 +39,27 @@ namespace ProxyDashboard.ProxyValidators
 
             return true;
         }
+
+        private class WebProxy : IWebProxy
+        {
+            private Uri uri;
+
+            public WebProxy(string ip)
+            {
+                uri = new Uri("http://" + ip);
+            }
+
+            public ICredentials Credentials { get; set; } = null;
+
+            public Uri GetProxy(Uri destination)
+            {
+                return uri;
+            }
+
+            public bool IsBypassed(Uri host)
+            {
+                return false;
+            }
+        }
     }
 }
