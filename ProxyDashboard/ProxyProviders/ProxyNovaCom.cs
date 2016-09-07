@@ -40,8 +40,11 @@ namespace ProxyDashboard.ProxyProviders
                 var ip = cells.ElementAt(0).Value;
                 if (ip.Contains("adsbygoogle")) return null;
 
-                var idx = ip.IndexOf('\'') + 1;
-                ip = ip.Substring(idx, ip.LastIndexOf('\'') - idx);
+                if (ip.Contains('\''))
+                {
+                    var idx = ip.IndexOf('\'') + 1;
+                    ip = ip.Substring(idx, ip.LastIndexOf('\'') - idx);
+                }
 
                 var port = cells.ElementAt(1).Value;
                 port = port.Trim();
