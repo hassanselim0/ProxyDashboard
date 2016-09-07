@@ -46,7 +46,18 @@ namespace ProxyDashboard
             };
 
             Console.WriteLine("Getting Proxy List ...");
-            var proxyIPs = providers.SelectMany(p => p.EnumerateIPs()).Distinct();
+            var proxyIPs = providers.SelectMany(p =>
+            {
+                try
+                {
+                    return p.EnumerateIPs();
+                }
+                catch
+                {
+                    Console.WriteLine("Failed to get list from: " + p.GetType().Name);
+                    return Enumerable.Empty<string>();
+                }
+            }).Distinct();
 
             var validIPs = proxyIPs.AsParallel()
                 .WithCancellation(cts.Token)
